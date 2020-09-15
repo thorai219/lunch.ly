@@ -28,6 +28,13 @@ class Customer {
     );
     return results.rows.map(c => new Customer(c));
   }
+  
+  static async loyalCustomers() {
+    const results = await db.query(
+      `SELECT c.first_name, c.last_name, COUNT(r.customer_id) AS total FROM customers AS c LEFT JOIN reservations AS r ON c.id = r.customer_id GROUP BY c.id, r.customer_id ORDER BY total DESC LIMIT 10;`
+    );
+    return results.rows;
+  }
 
   /** get a customer by ID. */
 
@@ -51,6 +58,10 @@ class Customer {
     }
 
     return new Customer(customer);
+  }
+
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
   }
 
   /** get all reservations for this customer. */

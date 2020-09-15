@@ -1,6 +1,7 @@
 /** Routes for Lunchly */
 
 const express = require("express");
+const db = require("./db");
 
 const Customer = require("./models/customer");
 const Reservation = require("./models/reservation");
@@ -112,4 +113,33 @@ router.post("/:id/add-reservation/", async function(req, res, next) {
   }
 });
 
+// SEARCH BY LAST NAME
+
+router.post("/search/", async (req, res, next) => {
+  try {
+    const term = req.body.customerName;
+    const result = await db.query(
+      `SELECT DISTINCT id, first_name, last_name FROM customers WHERE UPPER(last_name) = UPPER($1)`, [term]
+    )
+    const id = result.rows[0].id;
+    return res.redirect(`/${id}/`)
+  } catch(e) {
+    return next(e)
+  }
+})
+
+router.get("/best/customer", async (req, res, next) => {
+  try {
+    const results = await Customer.loyalCustomers();
+    return res.render("loyal_customer.html", { results });
+  } catch(e) {
+    return next(e)
+  }
+
+})
+
 module.exports = router;
+
+
+
+

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Loyal Customers{% endblock %}
+
+{% block content %}
+
+<ul>
+  {% for customer in results %}
+  <li><a href="/{{ customer.id }}/">{{ customer.first_name }} {{ customer.last_name }} - Reservations: {{ customer.total }}</a></li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
